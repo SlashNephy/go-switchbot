@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -93,7 +92,7 @@ const (
 	// KeyPad is SwitchBot Lock Model No. W2500010
 	KeyPad PhysicalDeviceType = "KeyPad"
 	// KeyPadTouch is SwitchBot Lock Model No. W2500020
-	KeyPadTouch PhysicalDeviceType = "KeyPad Touch"
+	KeyPadTouch PhysicalDeviceType = "Keypad Touch"
 	// CeilingLight is SwitchBot Ceiling Light Model No. W2612230 and W2612240.
 	CeilingLight PhysicalDeviceType = "Ceiling Light"
 	// CeilingLightPro is SwitchBot Ceiling Light Pro Model No. W2612210 and W2612220.
@@ -185,7 +184,7 @@ func (resp *httpResponse) DecodeJSON(data interface{}) error {
 }
 
 func (resp *httpResponse) Close() {
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
+	_, _ = io.Copy(io.Discard, resp.Body)
 	_ = resp.Body.Close()
 }
 
@@ -195,7 +194,6 @@ func (c *Client) do(ctx context.Context, method, path string, body io.Reader) (*
 	sign := hmacSHA256String(c.openToken+t+nonce, c.secretKey)
 
 	req, err := http.NewRequestWithContext(ctx, method, c.endpoint+path, body)
-
 	if err != nil {
 		return nil, err
 	}
